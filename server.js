@@ -15,7 +15,7 @@ app.get('/:usernameOrTag', (req, res) => {
 
     // tag 
     if (re.test(req.params.usernameOrTag)) {
-        api.getByTag(req.params.usernameOrTag).then(async hardware => {
+        api.getAssetByTag(req.params.usernameOrTag).then(async hardware => {
             const hardwareResult = api.checkValidAsset(hardware);
             // ok
             if (typeof hardwareResult === 'boolean' && hardwareResult) {
@@ -28,9 +28,9 @@ app.get('/:usernameOrTag', (req, res) => {
         });
     } else { // user
         let valid = true;
-        api.getIdFromUsername(req.params.usernameOrTag).then(async user_id => {
+        api.getIdByUsername(req.params.usernameOrTag).then(async user_id => {
             if (user_id) {
-                api.getAssetsFromId(user_id).then(assets => {
+                api.getAssetsByUserId(user_id).then(assets => {
                     assets.rows.forEach(hardware => {
                         const hardwareResult = api.checkValidAsset(hardware);
                         if (typeof hardwareResult === 'string') { //patladi hatayi goster
@@ -49,6 +49,21 @@ app.get('/:usernameOrTag', (req, res) => {
             }
         });
     }
+});
+
+app.get('/iade/:username', (req, res) => {
+    let valid = true;
+    api.getIdByUsername(req.params.username).then(async userId => {
+        if (userId) {
+            api.getDetailedCheckinItemsByUsername(userId).then(async checkins => {
+                api.giveJsonToPython(checkins);
+                res.download(DOSYA_ISMI);
+            });
+        } else {
+            res.send("kullanici adi hatali")
+        }
+    });
+
 });
 
 app.listen(3000)
