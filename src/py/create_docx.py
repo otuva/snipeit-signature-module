@@ -1,5 +1,6 @@
 import datetime
 import sys
+import os
 from docx import Document
 from docx.shared import Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -9,8 +10,8 @@ from docx.shared import RGBColor
 from pathlib import Path
 
 SPACING = 32
-DOSYA_ISMI = f'{Path.home()}/Dev/zimmet/output/zimmet.docx'
-LOGO_IMG = f'{Path.home()}/Dev/zimmet/assets/mega.png'
+DOSYA_ISMI = f'{os.path.dirname(os.path.realpath(__file__))}/../../output/zimmet.docx'
+LOGO_IMG = f'{os.path.dirname(os.path.realpath(__file__))}/../../assets/mega.png'
 
 # daha kolay olsun diye object olustur
 class Asset:
