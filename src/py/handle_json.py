@@ -10,14 +10,14 @@ example_return_json = '{"totalCheckins":3,"rows":[{"id":1,"name":"M330","image":
 def handle_json(jsonObj: str):
     current_object = json.loads(jsonObj)
     # user assets
-    if (current_object.get('total') != None):
+    if (current_object.get('assets') != None):
         assets = []
-        json_array = current_object.get('rows')
+        json_array = current_object.get('assets').get('rows')
         for asset in json_array:
             assets.append(Asset(asset))
-        create_user_assets_docx(assets)
+        create_user_assets_docx(assets, current_object.get('target'))
     # return form
-    if (current_object.get('totalCheckins') != None):
+    elif (current_object.get('totalCheckins') != None):
         items = []
         json_array = current_object.get('rows')
         for item in json_array:
@@ -27,13 +27,13 @@ def handle_json(jsonObj: str):
             # asset
             else:
                 items.append(Asset(item))
-        create_return_form_docx(items)
+        create_return_form_docx(items, current_object.get('admin'), current_object.get('target'))
     # single asset
-    else:
-        current_asset = Asset(current_object)
-        create_single_asset_docx(current_asset)
+    elif (current_object.get('asset') != None):
+        current_asset = Asset(current_object.get('asset'))
+        create_single_asset_docx(current_asset, current_object.get('target'))
 
-# handle_json(sys.argv[1])
+handle_json(sys.argv[1])
 # handle_json(example_json)
 # handle_json(example_user_json)
-handle_json(example_return_json)
+# handle_json(example_return_json)
