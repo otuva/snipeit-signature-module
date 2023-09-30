@@ -123,6 +123,28 @@ const getIdByUsername = (username) => {
     });
 }
 
+const getUserDetails = (userId) => {
+    return new Promise((resolve, reject) => {
+        const options = {
+            method: 'GET',
+            url: `https://${SNIPEIT_HOST}/api/v1/users/${userId}`,
+            headers: {
+                accept: 'application/json',
+                Authorization: `Bearer ${SNIPEIT_TOKEN}`
+            }
+        };
+
+        axios
+            .request(options)
+            .then((response) => {
+                resolve(response.data);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+}
+
 // get all assets from id
 const getAssetsByUserId = (userId) => {
     return new Promise((resolve, reject) => {
@@ -169,29 +191,78 @@ const getCheckinsByUserId = (userId) => {
     });
 }
 
+// const getCheckoutByUserId = (userId) => {
+//     return new Promise((resolve, reject) => {
+//         const options = {
+//             method: 'GET',
+//             url: `https://${SNIPEIT_HOST}/api/v1/reports/activity?limit=10&offset=0&action_type=checkout&target_type=user&target_id=${userId}&order=desc&sort=created_at`,
+//             headers: {
+//                 accept: 'application/json',
+//                 Authorization: `Bearer ${SNIPEIT_TOKEN}`
+//             }
+//         };
+
+//         axios
+//             .request(options)
+//             .then((response) => {
+//                 resolve(response.data);
+//             })
+//             .catch((error) => {
+//                 reject(error);
+//             });
+//     });
+// }
+
+const getCheckoutByItemId = (type, itemId) => {
+    return new Promise((resolve, reject) => {
+        const options = {
+            method: 'GET',
+            url: `https://${SNIPEIT_HOST}/api/v1/reports/activity?limit=10&offset=0&action_type=checkout&item_type=${type}&item_id=${itemId}}&order=desc&sort=created_at`,
+            headers: {
+                accept: 'application/json',
+                Authorization: `Bearer ${SNIPEIT_TOKEN}`
+            }
+        };
+        axios
+            .request(options)
+            .then((response) => {
+                resolve(response.data);
+            })
+            .catch((error) => {
+                reject(error);
+            });
+    });
+}
+
 const getDetailedCheckinItemsByUsername = (userId) => {
     const rows = []
 
     return new Promise((resolve, reject) => {
         getCheckinsByUserId(userId)
             .then(async (checkedInItems) => {
-
-                for await (const singleCheckin of checkedInItems.rows) {
-                    if (singleCheckin.item.type === "asset") {
-                        await getAssetById(singleCheckin.item.id).then((checkedinAsset) => {
-                            rows.push(checkedinAsset)
-                        })
-                    } else if (singleCheckin.item.type === "accessory") {
-                        await getAccessoryById(singleCheckin.item.id).then((checkedinAccessory) => {
-                            rows.push(checkedinAccessory)
-                        })
+                if (checkedInItems.total > 0) {
+                    for await (const singleCheckin of checkedInItems.rows) {
+                        if (singleCheckin.item.type === "asset") {
+                            await getAssetById(singleCheckin.item.id).then((checkedinAsset) => {
+                                rows.push(checkedinAsset)
+                            })
+                        } else if (singleCheckin.item.type === "accessory") {
+                            await getAccessoryById(singleCheckin.item.id).then((checkedinAccessory) => {
+                                rows.push(checkedinAccessory)
+                            })
+                        }
                     }
+
+                    resolve({
+                        totalCheckins: rows.length,
+                        rows,
+                        admin: checkedInItems.rows[0].admin.name,
+                        target: checkedInItems.rows[0].target.name
+                    })
+                } else {
+                    reject('kullanici hic iade yapmamis')
                 }
 
-                resolve({
-                    totalCheckins: rows.length,
-                    rows
-                })
             })
             .catch((error) => {
                 reject(error);
@@ -211,6 +282,8 @@ module.exports.checkValidAsset = checkValidAsset;
 module.exports.getAssetByTag = getAssetByTag;
 module.exports.getIdByUsername = getIdByUsername;
 module.exports.getAssetsByUserId = getAssetsByUserId;
+module.exports.getCheckoutByItemId = getCheckoutByItemId;
+module.exports.getUserDetails = getUserDetails;
 module.exports.getCheckinsByUserId = getCheckinsByUserId;
 module.exports.getDetailedCheckinItemsByUsername = getDetailedCheckinItemsByUsername;
 module.exports.giveJsonToPython = giveJsonToPython;
