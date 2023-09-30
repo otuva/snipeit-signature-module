@@ -8,6 +8,8 @@ from docx.enum.table import WD_ALIGN_VERTICAL
 from docx.shared import Pt
 from docx.shared import RGBColor
 from pathlib import Path
+from docx.enum.section import WD_ORIENT
+
 
 SPACING = 32
 DOSYA_ISMI = f'{os.path.dirname(os.path.realpath(__file__))}/../../output/zimmet.docx'
@@ -32,11 +34,18 @@ class Accessory:
         self.serial = ""
 
 # tarih: str, marka: str, model: str, kategori: str, seri: str
-def create_single_asset_docx(asset: Asset):
+def create_single_asset_docx(asset: Asset, target):
     datetime_object = datetime.datetime.now()
     
     # asil dokuman
     document = Document()
+
+    section = document.sections[-1]
+
+    new_width, new_height = section.page_height, section.page_width
+    section.orientation = WD_ORIENT.LANDSCAPE
+    section.page_width = new_width
+    section.page_height = new_height
 
     # paragraf bosluklari
     # paragraph_format = document.styles['Normal'].paragraph_format
@@ -73,8 +82,8 @@ def create_single_asset_docx(asset: Asset):
     # isimlerin yazacagi
     isimler = document.add_table(rows=1, cols=2)
     isimler_row = isimler.rows[0].cells
-    isimler_row[0].text = "Teslim Eden"
-    isimler_row[1].text = "Teslim Alan"
+    isimler_row[0].text = "Teslim Eden\n"
+    isimler_row[1].text = f"Teslim Alan\n{target}"
     isimler_row[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     isimler_row[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     isimler_row[0].paragraphs[0].paragraph_format.space_before = Pt(SPACING*2)
@@ -83,11 +92,18 @@ def create_single_asset_docx(asset: Asset):
     # dosyayi olustur
     document.save(DOSYA_ISMI)
 
-def create_user_assets_docx(assets: [Asset]):
+def create_user_assets_docx(assets: [Asset], target):
     datetime_object = datetime.datetime.now()
 
     # asil dokuman
     document = Document()
+
+    section = document.sections[-1]
+
+    new_width, new_height = section.page_height, section.page_width
+    section.orientation = WD_ORIENT.LANDSCAPE
+    section.page_width = new_width
+    section.page_height = new_height
 
     # paragraf bosluklari
     # paragraph_format = document.styles['Normal'].paragraph_format
@@ -148,8 +164,8 @@ def create_user_assets_docx(assets: [Asset]):
     # isimlerin yazacagi
     isimler = document.add_table(rows=1, cols=2)
     isimler_row = isimler.rows[0].cells
-    isimler_row[0].text = "Teslim Eden"
-    isimler_row[1].text = "Teslim Alan"
+    isimler_row[0].text = "Teslim Eden\n"
+    isimler_row[1].text = f"Teslim Alan\n{target}"
     isimler_row[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     isimler_row[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     isimler_row[0].paragraphs[0].paragraph_format.space_before = Pt(SPACING*2)
@@ -158,12 +174,20 @@ def create_user_assets_docx(assets: [Asset]):
     # dosyayi olustur
     document.save(DOSYA_ISMI)
 
-def create_return_form_docx(items: [Asset, Accessory]):
+def create_return_form_docx(items: [Asset, Accessory], admin, target):
     datetime_object = datetime.datetime.now()
 
     # asil dokuman
     document = Document()
 
+    section = document.sections[-1]
+
+    new_width, new_height = section.page_height, section.page_width
+    section.orientation = WD_ORIENT.LANDSCAPE
+    section.page_width = new_width
+    section.page_height = new_height
+
+    
     # paragraf bosluklari
     # paragraph_format = document.styles['Normal'].paragraph_format
     # paragraph_format.space_before = Pt(81)
@@ -221,8 +245,8 @@ def create_return_form_docx(items: [Asset, Accessory]):
     # isimlerin yazacagi
     isimler = document.add_table(rows=1, cols=2)
     isimler_row = isimler.rows[0].cells
-    isimler_row[0].text = "Teslim Alan"
-    isimler_row[1].text = "Teslim Eden"
+    isimler_row[0].text = f"Teslim Alan\n{admin}"
+    isimler_row[1].text = f"Teslim Eden\n{target}"
     isimler_row[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     isimler_row[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     isimler_row[0].paragraphs[0].paragraph_format.space_before = Pt(SPACING*2)
