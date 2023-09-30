@@ -34,7 +34,7 @@ class Accessory:
         self.serial = ""
 
 # tarih: str, marka: str, model: str, kategori: str, seri: str
-def create_single_asset_docx(asset: Asset, target):
+def create_single_asset_docx(asset: Asset, admin, target):
     datetime_object = datetime.datetime.now()
     
     # asil dokuman
@@ -82,7 +82,7 @@ def create_single_asset_docx(asset: Asset, target):
     # isimlerin yazacagi
     isimler = document.add_table(rows=1, cols=2)
     isimler_row = isimler.rows[0].cells
-    isimler_row[0].text = "Teslim Eden\n"
+    isimler_row[0].text = f"Teslim Eden\n{admin}"
     isimler_row[1].text = f"Teslim Alan\n{target}"
     isimler_row[0].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
     isimler_row[1].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -92,7 +92,7 @@ def create_single_asset_docx(asset: Asset, target):
     # dosyayi olustur
     document.save(DOSYA_ISMI)
 
-def create_user_assets_docx(assets: [Asset], target):
+def create_user_assets_docx(assets: [Asset], admin, target):
     datetime_object = datetime.datetime.now()
 
     # asil dokuman
@@ -140,22 +140,24 @@ def create_user_assets_docx(assets: [Asset], target):
 
     # demirbas listesi ----------------------------------------------------------------
     # basliklar
-    asset_table = document.add_table(rows=1, cols=5)
+    asset_table = document.add_table(rows=1, cols=6)
     asset_header_row = asset_table.rows[0]
     asset_header_row.cells[0].text = "Marka"
     asset_header_row.cells[1].text = "Model"
     asset_header_row.cells[2].text = "Kategori"
     asset_header_row.cells[3].text = "Seri No"
     asset_header_row.cells[4].text = "Tarih"
+    asset_header_row.cells[5].text = "Teslim Eden"
 
     # urunler
-    for asset in assets:
+    for idx, asset in enumerate(assets):
         asset_row = asset_table.add_row().cells
         asset_row[0].text = asset.manufacturer
         asset_row[1].text = asset.model
         asset_row[2].text = asset.category
         asset_row[3].text = asset.serial
         asset_row[4].text = asset.last_checkout
+        asset_row[5].text = admin[idx]
 
     asset_table.style = 'Light Shading Accent 1'
 
@@ -187,7 +189,7 @@ def create_return_form_docx(items: [Asset, Accessory], admin, target):
     section.page_width = new_width
     section.page_height = new_height
 
-    
+
     # paragraf bosluklari
     # paragraph_format = document.styles['Normal'].paragraph_format
     # paragraph_format.space_before = Pt(81)
