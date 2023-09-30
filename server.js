@@ -7,7 +7,15 @@ const DOSYA_ISMI = `${__dirname}/output/zimmet.docx`
 
 // todo bunu kaldir
 app.get('/', (req, res) => {
-    res.send('<h2>Zimmet tutanagini almak icin "/zimmet/x" yazin. x yerine asset tag veya kullanici adi </h2><br/><h2>Orn: /zimmet/00173 ya da /zimmet/o.akin</h2>')
+    res.sendFile(`${__dirname}/assets/usage.html`);
+})
+
+app.get('/submit', (req, res) => {
+    if (req.query.formtype === 'zimmet') {
+        res.redirect(`/${req.query.fname}`)
+    } else if (req.query.formtype === 'iade') {
+        res.redirect(`/iade/${req.query.fname}`)
+    }
 })
 
 app.get('/:usernameOrTag', (req, res) => {
@@ -31,13 +39,18 @@ app.get('/:usernameOrTag', (req, res) => {
         api.getIdByUsername(req.params.usernameOrTag).then(async user_id => {
             if (user_id) {
                 api.getAssetsByUserId(user_id).then(assets => {
-                    assets.rows.forEach(hardware => {
-                        const hardwareResult = api.checkValidAsset(hardware);
-                        if (typeof hardwareResult === 'string') { //patladi hatayi goster
-                            valid = false;
-                            res.send(hardwareResult);
-                        }
-                    });
+                    if (assets.total > 0) {
+                        assets.rows.forEach(hardware => {
+                            const hardwareResult = api.checkValidAsset(hardware);
+                            if (typeof hardwareResult === 'string') { //patladi hatayi goster
+                                valid = false;
+                                res.send(hardwareResult);
+                            }
+                        });
+                    } else {
+                        valid = false;
+                        res.send('kullanicinin ustunde demirbas yok')
+                    }
                     if (valid) {
                         api.giveJsonToPython(assets);
                         // res.send(assets)
