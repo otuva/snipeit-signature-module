@@ -111,6 +111,7 @@ app.get('/iade/:username', (req, res) => {
 
 if ('SNIPEIT_TOKEN' in process.env && 'SNIPEIT_HOST' in process.env) {
     app.listen(3000)
+    console.log('http://localhost:3000')
 } else {
     console.error(`set SNIPEIT_TOKEN and SNIPEIT_HOST variables in env`)
 }
