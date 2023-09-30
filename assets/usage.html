@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SnipeIT Zimmet Usage</title>
+    <style>
+        * {
+            text-align: center !important;
+            margin: auto !important;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Zimmet Tutanagi</h1>
+    <p>Zimmet tutanagini almak icin asagidaki "/zimmet/ASSETTAG" veya "/zimmet/KULLANICIADI" yazin</p>
+    <p>Orn: asset tag olarak "/zimmet/00173" ya da kullanici adi olarak "/zimmet/o.akin"</p>
+    
+    <br>
+
+    <p>Iade formu almak icin "/zimmet/iade/KULLANICIADI" yazin</p>
+
+    <br>
+
+    <hr>
+
+    <br>
+
+    <p>Ya da asagidaki kutucugu kullanin</p>
+
+    <br>
+
+    <form action="/submit">
+        <label for="fname">K.adi/asset tag:</label><br>
+        <input type="text" id="fname" name="fname"><br>
+        <label for="formtype">Form sekli:</label>
+        <select name="formtype" id="formtype">
+            <option value="zimmet">Zimmet</option>
+            <option value="iade">Iade</option>
+        </select>
+        <br>
+        <input type="submit" value="Dosyayi al">
+    </form>
+</body>
+
+</html>
