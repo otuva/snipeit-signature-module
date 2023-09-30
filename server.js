@@ -79,4 +79,8 @@ app.get('/iade/:username', (req, res) => {
 
 });
 
-app.listen(3000)
+if ('SNIPEIT_TOKEN' in process.env && 'SNIPEIT_HOST' in process.env) {
+    app.listen(3000)
+} else {
+    console.error(`set SNIPEIT_TOKEN and SNIPEIT_HOST variables in env`)
+}
