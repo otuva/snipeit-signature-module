@@ -19,6 +19,8 @@ app.get('/submit', (req, res) => {
 })
 
 app.get('/:usernameOrTag', (req, res) => {
+    const admins = []
+
     const re = /^\d{5}$/g;
 
     // tag 
@@ -27,35 +29,60 @@ app.get('/:usernameOrTag', (req, res) => {
             const hardwareResult = api.checkValidAsset(hardware);
             // ok
             if (typeof hardwareResult === 'boolean' && hardwareResult) {
-                api.giveJsonToPython(hardware);
-                // res.send(hardware);
-                res.download(DOSYA_ISMI);
+                // res.send({
+                //     asset: hardware,
+                //     target: hardware.assigned_to.name
+                // });
+                api.getCheckoutByItemId('asset', hardware.id).then(assetCheckout => {
+                    api.giveJsonToPython({
+                        asset: hardware,
+                        admin: assetCheckout.rows[0].admin.name,
+                        target: hardware.assigned_to.name
+                    });
+                    res.download(DOSYA_ISMI);
+                })
             } else if (typeof hardwareResult === 'string') { //patladi hatayi goster
                 res.send(hardwareResult);
             }
         });
     } else { // user
         let valid = true;
-        api.getIdByUsername(req.params.usernameOrTag).then(async user_id => {
-            if (user_id) {
-                api.getAssetsByUserId(user_id).then(assets => {
-                    if (assets.total > 0) {
-                        assets.rows.forEach(hardware => {
-                            const hardwareResult = api.checkValidAsset(hardware);
-                            if (typeof hardwareResult === 'string') { //patladi hatayi goster
-                                valid = false;
-                                res.send(hardwareResult);
+        api.getIdByUsername(req.params.usernameOrTag).then(async userId => {
+            if (userId) {
+                api.getAssetsByUserId(userId).then(assets => {
+                    api.getUserDetails(userId).then(async user => {
+                        if (assets.total > 0) {
+
+                            for await (const hardware of assets.rows) {
+                                const hardwareResult = api.checkValidAsset(hardware);
+                                await api.getCheckoutByItemId('asset', hardware.id).then(assetCheckout =>
+                                    admins.push(assetCheckout.rows[0].admin.name)
+                                )
+                                if (typeof hardwareResult === 'string') { //patladi hatayi goster
+                                    valid = false;
+                                    res.send(hardwareResult);
+                                }
                             }
-                        });
-                    } else {
-                        valid = false;
-                        res.send('kullanicinin ustunde demirbas yok')
-                    }
-                    if (valid) {
-                        api.giveJsonToPython(assets);
-                        // res.send(assets)
-                        res.download(DOSYA_ISMI);
-                    }
+                        } else {
+                            valid = false;
+                            res.send('kullanicinin ustunde demirbas yok')
+                        }
+                        if (valid) {
+                            // res.send({
+                            //     totalAssets: assets.total,
+                            //     rows: assets.rows,
+                            //     admin: admins,
+                            //     target: user.name
+                            // })
+                            api.giveJsonToPython({
+                                totalAssets: assets.total,
+                                rows: assets.rows,
+                                admin: admins,
+                                target: user.name
+                            });
+                            res.download(DOSYA_ISMI);
+                        }
+                    })
                 });
             } else {
                 res.send("kullanici adi hatali")
@@ -71,7 +98,10 @@ app.get('/iade/:username', (req, res) => {
             api.getDetailedCheckinItemsByUsername(userId).then(async checkins => {
                 api.giveJsonToPython(checkins);
                 res.download(DOSYA_ISMI);
-            });
+            }).catch(reason => {
+                res.send(reason)
+            }
+            );
         } else {
             res.send("kullanici adi hatali")
         }
