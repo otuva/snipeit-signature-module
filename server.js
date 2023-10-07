@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 
 const DOSYA_ISMI = `${__dirname}/output/zimmet.docx`
+const SERVE_FROM_PATH = '' // if serving from root leave empty, otherwise supply path like "/zimmet"
 
 // todo bunu kaldir
 app.get('/', (req, res) => {
@@ -12,9 +13,9 @@ app.get('/', (req, res) => {
 
 app.get('/submit', (req, res) => {
     if (req.query.formtype === 'zimmet') {
-        res.redirect(`/${req.query.fname}`)
+        res.redirect(`${SERVE_FROM_PATH}/${req.query.fname}`)
     } else if (req.query.formtype === 'iade') {
-        res.redirect(`/iade/${req.query.fname}`)
+        res.redirect(`${SERVE_FROM_PATH}/iade/${req.query.fname}`)
     }
 })
 
