@@ -18,9 +18,11 @@ LOGO_IMG = f'{os.path.dirname(os.path.realpath(__file__))}/../../assets/mega.png
 # daha kolay olsun diye object olustur
 class Asset:
     def __init__(self, loaded_json):
-        raw_date = loaded_json.get('last_checkout').get('datetime')
-        datetime_object = datetime.datetime.strptime(raw_date, '%Y-%m-%d %H:%M:%S')
-        self.last_checkout = datetime_object.strftime("%d.%m.%Y %H:%M:%S")
+
+        if (loaded_json.get('last_checkout')):
+            raw_date = loaded_json.get('last_checkout').get('datetime')
+            datetime_object = datetime.datetime.strptime(raw_date, '%Y-%m-%d %H:%M:%S')
+            self.last_checkout = datetime_object.strftime("%d.%m.%Y %H:%M:%S")
         self.manufacturer = loaded_json.get('manufacturer').get('name')
         self.model = loaded_json.get('model').get('name')
         self.category = loaded_json.get('category').get('name')
