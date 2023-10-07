@@ -2,13 +2,14 @@ const api = require('./src/api');
 
 const express = require('express')
 const app = express()
+app.engine('html', require('ejs').renderFile);
 
 const DOSYA_ISMI = `${__dirname}/output/zimmet.docx`
-const SERVE_FROM_PATH = '' // if serving from root leave empty, otherwise supply path like "/zimmet"
+const SERVE_FROM_PATH = process.env.SERVE_FROM_PATH ? process.env.SERVE_FROM_PATH : '' // if serving from root leave empty, otherwise supply path like "/zimmet"
 
 // todo bunu kaldir
 app.get('/', (req, res) => {
-    res.sendFile(`${__dirname}/assets/usage.html`);
+    res.render(`${__dirname}/views/usage.html`, {SERVE_FROM_PATH:SERVE_FROM_PATH});
 })
 
 app.get('/submit', (req, res) => {
