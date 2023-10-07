@@ -47,12 +47,12 @@
         <br>
         <input type="submit" value="Dosyayi al">
     </form>
-
+    
     <script>
-        const currentPath = window.location.pathname;
-        const frm = document.getElementById('assetForm');
-        if (currentPath !== '/' && frm) {
-            frm.action = `${currentPath}/submit`
+        const SERVE_FROM_PATH = "<%= SERVE_FROM_PATH %>";
+        if (SERVE_FROM_PATH) {
+            const frm = document.getElementById('assetForm');
+            frm.action = `${SERVE_FROM_PATH}/submit`
         }
     </script>
 </body>
