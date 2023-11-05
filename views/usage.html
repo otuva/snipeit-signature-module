@@ -19,20 +19,16 @@
     <br>
 
     <h1>Zimmet Tutanagi</h1>
-    <p>Zimmet tutanagini almak icin adres barina "/zimmet/ASSETTAG" veya "/zimmet/KULLANICIADI" yazin</p>
-    <p>Orn: asset tag olarak "/zimmet/00173" ya da kullanici adi olarak "/zimmet/o.akin"</p>
+    <p>Zimmet tutanagini almak icin ASSETTAG veya KULLANICIADI yazin</p>
+    <p>Orn: 00173 ya da o.akin</p>
 
     <br>
 
-    <p>Iade formu almak icin adres barina "/zimmet/iade/KULLANICIADI" yazin</p>
+    <p>Iade formu almak icin KULLANICIADI yazin</p>
 
     <br>
 
     <hr>
-
-    <br>
-
-    <p>Ya da asagidaki kutucugu kullanin</p>
 
     <br>
 
@@ -47,13 +43,24 @@
         <br>
         <input type="submit" value="Dosyayi al">
     </form>
-    
+
+    <br>
+
+    <hr>
+
+    <br>
+
+    <h2><a id="mainPageBtn" href="">⬅ ANA SAYFA</a></h2>
+
     <script>
         const SERVE_FROM_PATH = "<%= SERVE_FROM_PATH %>";
+        const SNIPEIT_HOST = "<%= SNIPEIT_HOST %>";
         if (SERVE_FROM_PATH) {
             const frm = document.getElementById('assetForm');
-            frm.action = `${SERVE_FROM_PATH}/submit`
+            frm.action = `${SERVE_FROM_PATH}/submit`;
         }
+        const btn = document.getElementById('mainPageBtn');
+        btn.href = `http://${SNIPEIT_HOST}`;
     </script>
 </body>
 
