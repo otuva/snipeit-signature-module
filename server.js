@@ -9,7 +9,7 @@ const SERVE_FROM_PATH = process.env.SERVE_FROM_PATH ? process.env.SERVE_FROM_PAT
 
 // todo bunu kaldir
 app.get('/', (req, res) => {
-    res.render(`${__dirname}/views/usage.html`, {SERVE_FROM_PATH:SERVE_FROM_PATH});
+    res.render(`${__dirname}/views/usage.html`, {SNIPEIT_HOST:api.SNIPEIT_HOST, SERVE_FROM_PATH:SERVE_FROM_PATH});
 })
 
 app.get('/submit', (req, res) => {
