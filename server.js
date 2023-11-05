@@ -4,7 +4,7 @@ const express = require('express')
 const app = express()
 app.engine('html', require('ejs').renderFile);
 
-const DOSYA_ISMI = `${__dirname}/output/zimmet.docx`
+const FILE_NAME = `${__dirname}/output/zimmet.docx`
 const SERVE_FROM_PATH = process.env.SERVE_FROM_PATH ? process.env.SERVE_FROM_PATH : '' // if serving from root leave empty, otherwise supply path like "/zimmet"
 
 // todo bunu kaldir
@@ -41,7 +41,7 @@ app.get('/:usernameOrTag', (req, res) => {
                         admin: assetCheckout.rows[0].admin.name,
                         target: hardware.assigned_to.name
                     });
-                    res.download(DOSYA_ISMI);
+                    res.download(FILE_NAME);
                 })
             } else if (typeof hardwareResult === 'string') { //patladi hatayi goster
                 res.send(hardwareResult);
@@ -82,7 +82,7 @@ app.get('/:usernameOrTag', (req, res) => {
                                 admin: admins,
                                 target: user.name
                             });
-                            res.download(DOSYA_ISMI);
+                            res.download(FILE_NAME);
                         }
                     })
                 });
@@ -99,7 +99,7 @@ app.get('/iade/:username', (req, res) => {
         if (userId) {
             api.getDetailedCheckinItemsByUsername(userId).then(async checkins => {
                 api.giveJsonToPython(checkins);
-                res.download(DOSYA_ISMI);
+                res.download(FILE_NAME);
             }).catch(reason => {
                 res.send(reason)
             }
