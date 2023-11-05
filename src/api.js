@@ -287,3 +287,4 @@ module.exports.getUserDetails = getUserDetails;
 module.exports.getCheckinsByUserId = getCheckinsByUserId;
 module.exports.getDetailedCheckinItemsByUsername = getDetailedCheckinItemsByUsername;
 module.exports.giveJsonToPython = giveJsonToPython;
+module.exports.SNIPEIT_HOST = SNIPEIT_HOST;
